@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>פנקס מילואים – ימים, הוצאות וציוד</title>
+<meta name="description" content="כלי חינמי למילואימניקים: מעקב ימי שירות, הוצאות עם קבלות וצ'קליסט ציוד. עובד בטלפון, בלי הרשמה, הנתונים נשמרים רק אצלך.">
+<meta property="og:title" content="פנקס מילואים – ימים, הוצאות וציוד במקום אחד">
+<meta property="og:description" content="חינם, בלי הרשמה, הנתונים נשארים בטלפון שלך.">
+<meta name="theme-color" content="#3f4f2f">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f2ec;--card:#fff;--ink:#1f2419;--muted:#6b7062;--olive:#4b5d36;--olive-d:#3f4f2f;--line:#e2dfd4;--accent:#c9a227;--danger:#b33a2b}
+@media (prefers-color-scheme:dark){:root{--bg:#15180f;--card:#1f2418;--ink:#eef0e6;--muted:#a3a894;--line:#33392a;--olive:#7d9a5a;--olive-d:#2b3520}}
+*{box-sizing:border-box}
+body{margin:0;font-family:Heebo,system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+header{background:var(--olive-d);color:#fff;padding:18px 16px 14px}
+header h1{margin:0;font-size:1.4rem;font-weight:800}
+header p{margin:2px 0 0;opacity:.85;font-size:.9rem}
+nav{display:flex;position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line)}
+nav button{flex:1;border:0;background:none;padding:12px 4px;font:inherit;font-weight:600;color:var(--muted);border-bottom:3px solid transparent;cursor:pointer}
+nav button.on{color:var(--olive);border-color:var(--olive)}
+main{max-width:640px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+.card h2{margin:0 0 10px;font-size:1.1rem}
+.big{font-size:2.4rem;font-weight:800;color:var(--olive);line-height:1}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row>*{flex:1 1 130px}
+label{display:block;font-size:.8rem;color:var(--muted);margin-bottom:2px}
+input,select{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font:inherit;background:var(--bg);color:var(--ink)}
+.btn{display:inline-block;border:0;border-radius:10px;padding:11px 16px;font:inherit;font-weight:600;background:var(--olive);color:#fff;cursor:pointer;text-decoration:none;text-align:center}
+.btn.ghost{background:none;color:var(--olive);border:1px solid var(--olive)}
+.btn.gold{background:var(--accent);color:#1f2419}
+.btn.full{width:100%;margin-top:10px}
+ul.list{list-style:none;margin:0;padding:0}
+ul.list li{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--line)}
+ul.list li:last-child{border:0}
+ul.list .grow{flex:1}
+ul.list small{color:var(--muted)}
+.x{border:0;background:none;color:var(--danger);font-size:1.1rem;cursor:pointer;padding:4px 8px}
+.chk li{cursor:pointer}
+.chk li.done .grow{text-decoration:line-through;color:var(--muted)}
+.chk input[type=checkbox]{width:22px;height:22px;accent-color:var(--olive)}
+.muted{color:var(--muted);font-size:.85rem}
+.tab{display:none}.tab.on{display:block}
+.support{border:2px solid var(--accent)}
+.tips{display:flex;gap:8px;margin-top:8px}.tips a{flex:1}
+.links a{color:var(--olive);font-weight:600}
+footer{text-align:center;color:var(--muted);font-size:.8rem;padding:20px 16px 40px}
+.prog{height:10px;background:var(--line);border-radius:6px;overflow:hidden;margin-top:8px}
+.prog i{display:block;height:100%;background:var(--olive)}
+</style>
+</head>
+<body>
+<header>
+  <h1>🎖️ פנקס מילואים</h1>
+  <p>ימים, הוצאות וציוד במקום אחד. בלי הרשמה, הנתונים נשמרים רק בטלפון שלך.</p>
+</header>
+<nav>
+  <button data-t="days" class="on">ימים</button>
+  <button data-t="exp">הוצאות</button>
+  <button data-t="gear">ציוד</button>
+  <button data-t="sum">סיכום</button>
+</nav>
+<main>
+<!-- ימים -->
+<section id="days" class="tab on">
+  <div class="card">
+    <h2>ימי שירות בשנה</h2>
+    <div class="row" style="align-items:end">
+      <div><div class="big" id="daysTotal">0</div><div class="muted">ימים ב-<span id="yearLbl"></span></div></div>
+      <div><label>שנה</label><select id="yearSel"></select></div>
+    </div>
+    <div class="prog"><i id="daysProg" style="width:0"></i></div>
+    <div class="muted" id="daysGoalLbl"></div>
+  </div>
+  <div class="card">
+    <h2>הוספת תקופת שירות</h2>
+    <div class="row">
+      <div><label>מתאריך</label><input type="date" id="dFrom"></div>
+      <div><label>עד תאריך</label><input type="date" id="dTo"></div>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <div><label>סוג צו / הערה</label><input id="dNote" placeholder="צו 8, אימון, תעסוקה…"></div>
+    </div>
+    <button class="btn full" id="addDays">הוסף תקופה</button>
+  </div>
+  <div class="card"><h2>תקופות</h2><ul class="list" id="daysList"></ul></div>
+</section>
+
+<!-- הוצאות -->
+<section id="exp" class="tab">
+  <div class="card">
+    <h2>הוצאות במילואים</h2>
+    <div class="big" id="expTotal">₪0</div>
+    <div class="muted">שמור קבלות. חלק מההוצאות אפשר להגיש להחזר, לפי הכללים העדכניים.</div>
+  </div>
+  <div class="card">
+    <h2>הוספת הוצאה</h2>
+    <div class="row">
+      <div><label>תאריך</label><input type="date" id="eDate"></div>
+      <div><label>סכום ₪</label><input type="number" inputmode="decimal" id="eAmt" placeholder="0"></div>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <div><label>קטגוריה</label><select id="eCat"><option>ציוד</option><option>נסיעות/דלק</option><option>אוכל</option><option>בייביסיטר/משפחה</option><option>אחר</option></select></div>
+      <div><label>תיאור</label><input id="eDesc" placeholder="נעליים, חניה…"></div>
+    </div>
+    <label style="margin-top:8px;display:flex;gap:6px;align-items:center;color:var(--ink)"><input type="checkbox" id="eRcpt" style="width:auto"> יש קבלה</label>
+    <button class="btn full" id="addExp">הוסף הוצאה</button>
+  </div>
+  <div class="card"><h2>רשימה</h2><ul class="list" id="expList"></ul>
+    <button class="btn ghost full" id="csv">ייצוא לאקסל (CSV)</button></div>
+</section>
+
+<!-- ציוד -->
+<section id="gear" class="tab">
+  <div class="card">
+    <h2>צ'קליסט ציוד לפני יציאה</h2>
+    <div class="muted" id="gearCount"></div>
+    <ul class="list chk" id="gearList"></ul>
+    <div class="row" style="margin-top:8px"><div><input id="gNew" placeholder="פריט חדש…"></div><button class="btn" id="addGear" style="flex:0 0 auto">הוסף</button></div>
+    <div class="row" style="margin-top:8px">
+      <button class="btn ghost" id="resetGear">איפוס סימונים (לזימון הבא)</button>
+    </div>
+  </div>
+</section>
+
+<!-- סיכום -->
+<section id="sum" class="tab">
+  <div class="card">
+    <h2>סיכום</h2>
+    <div id="sumBox" class="muted"></div>
+    <button class="btn full" id="shareWa">שלח סיכום לעצמי בוואטסאפ</button>
+  </div>
+  <div class="card links">
+    <h2>זכויות ומענקים: מקורות רשמיים</h2>
+    <p class="muted">הסכומים והתנאים משתנים, אז לא מחשבים כאן מענקים. בדוק את הזכאות שלך במקורות:</p>
+    <ul>
+      <li><a href="https://www.kolzchut.org.il/he/%D7%9E%D7%A9%D7%A8%D7%AA%D7%99_%D7%9E%D7%99%D7%9C%D7%95%D7%90%D7%99%D7%9D" target="_blank" rel="noopener">כל זכות: משרתי מילואים</a></li>
+      <li><a href="https://www.miluim.idf.il/" target="_blank" rel="noopener">אתר המילואים של צה"ל</a></li>
+      <li><a href="https://www.btl.gov.il/benefits/Reserve_Service/Pages/default.aspx" target="_blank" rel="noopener">ביטוח לאומי: תגמולי מילואים</a></li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>גיבוי</h2>
+    <p class="muted">הנתונים שמורים בדפדפן הזה בלבד. כדאי לגבות לפני החלפת טלפון.</p>
+    <div class="row"><button class="btn ghost" id="exportJson">הורד גיבוי</button>
+    <label class="btn ghost" style="margin:0;color:var(--olive)">שחזר מגיבוי<input type="file" id="importJson" accept="application/json" hidden></label></div>
+  </div>
+</section>
+
+<div class="card support" id="supportBox" hidden>
+  <h2>☕ עזר לך? תזמין אותי לקפה</h2>
+  <p class="muted">הכלי חינמי ובלי פרסומות. תמיכה קטנה עוזרת להמשיך לפתח (תזכורות, גרסה לפלוגה ועוד).</p>
+  <div class="tips"><a class="btn gold" data-amt="10" target="_blank" rel="noopener">₪10</a><a class="btn gold" data-amt="20" target="_blank" rel="noopener">₪20</a><a class="btn gold" data-amt="36" target="_blank" rel="noopener">₪36</a></div>
+</div>
+<div class="card" id="unitBox" hidden>
+  <h2>🪖 גרסה לפלוגה / ליחידה</h2>
+  <p class="muted">פנקס עם שם וסמל היחידה, צ'קליסט ציוד שהמפ"ל מגדיר מראש וקישור אחד לכל הלוחמים. ₪99 חד-פעמי, מוכן תוך 24 שעות.</p>
+  <a class="btn full" id="unitWa" target="_blank" rel="noopener">אני רוצה לפלוגה שלי</a>
+</div>
+</main>
+<footer>פנקס מילואים · כלי עצמאי, לא רשמי ולא קשור לצה"ל · הנתונים לא נשלחים לשום שרת<br>
+<a href="#" id="shareApp" style="color:var(--olive);font-weight:600">שתף עם החבר'ה מהפלוגה</a></footer>
+
+<script src="config.js"></script>
+<script>
+const $=s=>document.querySelector(s), K='pinkas-miluim-v1';
+const DEFAULT_GEAR=["תעודת מילואים/חוגר","צו קריאה (צילום בטלפון)","מטען + סוללה ניידת","כבל ארוך","אוזניות","מדים ×2","חולצות ×5 (דרייפיט)","גרביים ×7","תחתונים ×7","נעליים צבאיות + נעלי ספורט","כפכפים","מגבת","כלי רחצה","תרופות קבועות","משקפי שמש","פנס ראש","סכין רב-שימושית","כובע/כובע גרב","מעיל / פליז","שק שינה","בקבוק מים / קמל","חטיפים ואנרגיה","מנעול לתיק","כסף מזומן קטן","שקיות ניילון לבגדים"];
+let S; try{S=JSON.parse(localStorage.getItem(K))}catch(e){}
+S=S||{days:[],exp:[],gear:DEFAULT_GEAR.map(t=>({t,d:false}))};
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){};render()};
+const today=()=>new Date().toISOString().slice(0,10);
+const nDays=(a,b)=>Math.round((new Date(b)-new Date(a))/864e5)+1;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmtD=d=>d.split('-').reverse().join('.');
+let year=new Date().getFullYear();
+
+// ימים בשנה נתונה (חיתוך תקופות שחוצות שנה)
+function daysInYear(y){let t=0;S.days.forEach(p=>{const a=p.from>`${y}-01-01`?p.from:`${y}-01-01`,b=p.to<`${y}-12-31`?p.to:`${y}-12-31`;if(a<=b)t+=nDays(a,b)});return t}
+function years(){const s=new Set([new Date().getFullYear()]);S.days.forEach(p=>{for(let y=+p.from.slice(0,4);y<=+p.to.slice(0,4);y++)s.add(y)});return[...s].sort((a,b)=>b-a)}
+
+function render(){
+  const ys=years();$('#yearSel').innerHTML=ys.map(y=>`<option ${y==year?'selected':''}>${y}</option>`).join('');
+  const t=daysInYear(year);$('#daysTotal').textContent=t;$('#yearLbl').textContent=year;
+  $('#daysProg').style.width=Math.min(100,t/60*100)+'%';
+  $('#daysGoalLbl').textContent='הפס מתמלא עד 60 ימים. ספי הזכאות משתנים, ראה מקורות רשמיים בלשונית "סיכום".';
+  $('#daysList').innerHTML=S.days.length?S.days.slice().sort((a,b)=>b.from.localeCompare(a.from)).map(p=>`<li><div class="grow">${fmtD(p.from)} – ${fmtD(p.to)} <b>(${nDays(p.from,p.to)} ימים)</b><br><small>${esc(p.note||'')}</small></div><button class="x" data-del-d="${p.id}" aria-label="מחק">✕</button></li>`).join(''):'<li class="muted">עוד לא הוספת תקופות</li>';
+  const tot=S.exp.reduce((s,e)=>s+e.amt,0);$('#expTotal').textContent='₪'+tot.toLocaleString('he-IL');
+  $('#expList').innerHTML=S.exp.length?S.exp.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(e=>`<li><div class="grow">${esc(e.desc||e.cat)} <b>₪${e.amt.toLocaleString('he-IL')}</b><br><small>${fmtD(e.date)} · ${esc(e.cat)} ${e.rcpt?'· 🧾 קבלה':'· ⚠️ אין קבלה'}</small></div><button class="x" data-del-e="${e.id}" aria-label="מחק">✕</button></li>`).join(''):'<li class="muted">אין הוצאות</li>';
+  const done=S.gear.filter(g=>g.d).length;$('#gearCount').textContent=`${done}/${S.gear.length} ארוזים`;
+  $('#gearList').innerHTML=S.gear.map((g,i)=>`<li class="${g.d?'done':''}" data-g="${i}"><input type="checkbox" ${g.d?'checked':''} tabindex="-1"><span class="grow">${esc(g.t)}</span><button class="x" data-del-g="${i}" aria-label="מחק">✕</button></li>`).join('');
+  $('#sumBox').innerHTML=summary().replace(/\n/g,'<br>');
+}
+function summary(){const ys=years().map(y=>`${y}: ${daysInYear(y)} ימים`).join('\n');const tot=S.exp.reduce((s,e)=>s+e.amt,0),nr=S.exp.filter(e=>!e.rcpt).length;
+  return `📋 סיכום פנקס מילואים\n${ys}\nתקופות: ${S.days.length}\nהוצאות: ₪${tot.toLocaleString('he-IL')} (${S.exp.length} פריטים${nr?`, ${nr} בלי קבלה`:''})`}
+
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('nav button,.tab').forEach(x=>x.classList.remove('on'));b.classList.add('on');$('#'+b.dataset.t).classList.add('on');scrollTo(0,0)});
+$('#yearSel').onchange=e=>{year=+e.target.value;render()};
+$('#addDays').onclick=()=>{const f=$('#dFrom').value,t=$('#dTo').value||f;if(!f)return alert('בחר תאריך התחלה');if(t<f)return alert('תאריך הסיום לפני ההתחלה');S.days.push({id:Date.now(),from:f,to:t,note:$('#dNote').value.trim()});year=+f.slice(0,4);$('#dFrom').value=$('#dTo').value=$('#dNote').value='';save()};
+$('#addExp').onclick=()=>{const amt=parseFloat($('#eAmt').value);if(!(amt>0))return alert('הזן סכום');S.exp.push({id:Date.now(),date:$('#eDate').value||today(),amt,cat:$('#eCat').value,desc:$('#eDesc').value.trim(),rcpt:$('#eRcpt').checked});$('#eAmt').value=$('#eDesc').value='';$('#eRcpt').checked=false;save()};
+$('#addGear').onclick=()=>{const t=$('#gNew').value.trim();if(t){S.gear.push({t,d:false});$('#gNew').value='';save()}};
+$('#gNew').onkeydown=e=>{if(e.key==='Enter')$('#addGear').click()};
+$('#resetGear').onclick=()=>{S.gear.forEach(g=>g.d=false);save()};
+document.body.addEventListener('click',e=>{const d=e.target.dataset;
+  if(d.delD&&confirm('למחוק תקופה?')){S.days=S.days.filter(p=>p.id!=d.delD);save();return}
+  if(d.delE&&confirm('למחוק הוצאה?')){S.exp=S.exp.filter(x=>x.id!=d.delE);save();return}
+  if(d.delG!==undefined){S.gear.splice(+d.delG,1);save();return}
+  const li=e.target.closest('[data-g]');if(li){const g=S.gear[+li.dataset.g];g.d=!g.d;save()}});
+const dl=(name,data,type)=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type}));a.download=name;a.click()};
+$('#csv').onclick=()=>dl('miluim-expenses.csv','﻿תאריך,סכום,קטגוריה,תיאור,קבלה\n'+S.exp.map(e=>[e.date,e.amt,e.cat,'"'+(e.desc||'').replace(/"/g,'""')+'"',e.rcpt?'כן':'לא'].join(',')).join('\n'),'text/csv');
+$('#exportJson').onclick=()=>dl('pinkas-miluim-backup.json',JSON.stringify(S),'application/json');
+$('#importJson').onchange=e=>{const f=e.target.files[0];if(!f)return;f.text().then(t=>{try{const o=JSON.parse(t);if(o.days&&o.exp&&o.gear){S=o;save();alert('שוחזר ✔')}else throw 0}catch(_){alert('קובץ לא תקין')}})};
+$('#shareWa').onclick=()=>open('https://wa.me/?text='+encodeURIComponent(summary()));
+$('#shareApp').onclick=e=>{e.preventDefault();const txt='כלי חינמי למילואים: מעקב ימים, הוצאות וצ\'קליסט ציוד. בלי הרשמה 👇\n'+location.href.split('?')[0];
+  if(navigator.share)navigator.share({text:txt}).catch(()=>{});else open('https://wa.me/?text='+encodeURIComponent(txt))};
+// תשלום / יחידה
+const C=window.APP_CONFIG||{};
+if(C.PAY_LINK){$('#supportBox').hidden=false;document.querySelectorAll('[data-amt]').forEach(a=>a.href=C.PAY_LINK)}
+if(C.WHATSAPP){$('#unitBox').hidden=false;$('#unitWa').href=`https://wa.me/${C.WHATSAPP}?text=${encodeURIComponent('היי, ראיתי את פנקס המילואים ואני רוצה גרסה לפלוגה/יחידה שלי')}`}
+$('#eDate').value=today();
+render();
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
